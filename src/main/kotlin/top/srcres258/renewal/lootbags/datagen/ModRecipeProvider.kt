@@ -6,10 +6,12 @@ import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapedRecipeBuilder
+import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.common.conditions.IConditionBuilder
 import top.srcres258.renewal.lootbags.block.ModBlocks
+import top.srcres258.renewal.lootbags.item.custom.LootBagType
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
@@ -17,6 +19,7 @@ class ModRecipeProvider(
     registries: CompletableFuture<HolderLookup.Provider>
 ) : RecipeProvider(output, registries), IConditionBuilder {
     override fun buildRecipes(recipeOutput: RecipeOutput) {
+        // Recipes for blocks with functionalities.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LOOT_RECYCLER)
             .pattern("AAA")
             .pattern("ABA")
@@ -44,5 +47,23 @@ class ModRecipeProvider(
             .define('C', Items.IRON_INGOT)
             .unlockedBy("has_chest", has(Items.CHEST))
             .save(recipeOutput)
+
+        // Recipes for conversions between loot bags.
+        for (type in LootBagType.entries) {
+            for (otherType in LootBagType.entries) {
+                // Skip for types larger than or equal to the target type.
+                if (otherType.rarity >= type.rarity) {
+                    continue
+                }
+                // Also skip for creative-only bags.
+                if (type.creativeOnly || otherType.creativeOnly) {
+                    continue
+                }
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, type.asItem())
+                    .requires(otherType, type.amountFactorEquivalentTo(otherType).toInt())
+                    .unlockedBy("has_${otherType.itemId}", has(otherType.asItem()))
+                    .save(recipeOutput, "${type.itemId}_from_${otherType.itemId}")
+            }
+        }
     }
 }
