@@ -1,0 +1,16 @@
+{
+    "item.lootbags.common_loot_bag": "寻常战利品袋",
+    "item.lootbags.uncommon_loot_bag": "不寻常战利品袋",
+    "item.lootbags.rare_loot_bag": "稀有战利品袋",
+    "item.lootbags.epic_loot_bag": "史诗战利品袋",
+    "item.lootbags.legendary_loot_bag": "传奇战利品袋",
+    "item.lootbags.patient_loot_bag": "耐力战利品袋",
+    "item.lootbags.artificial_loot_bag": "人造战利品袋",
+    "item.lootbags.bacon_loot_bag": "培根战利品袋",
+
+    "block.lootbags.loot_recycler": "战利品回收器",
+    "block.lootbags.bag_opener": "开袋器",
+    "block.lootbags.bag_storage": "战利品袋存储器",
+
+    "creativetab.lootbags.loot_bags_tab": "战利品袋"
+}
