@@ -8,5 +8,9 @@
     "item.lootbags.artificial_loot_bag": "Artificial Loot Bag",
     "item.lootbags.bacon_loot_bag": "Bacon Loot Bag",
 
+    "block.lootbags.loot_recycler": "Loot Recycler",
+    "block.lootbags.bag_opener": "Bag Opener",
+    "block.lootbags.bag_storage": "Bag Storage",
+
     "creativetab.lootbags.loot_bags_tab": "Loot Bags"
 }

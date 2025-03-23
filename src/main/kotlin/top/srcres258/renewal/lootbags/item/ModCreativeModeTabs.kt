@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 import top.srcres258.renewal.lootbags.LootBags
+import top.srcres258.renewal.lootbags.block.ModBlocks
 import java.util.function.Supplier
 
 object ModCreativeModeTabs {
@@ -26,6 +27,10 @@ object ModCreativeModeTabs {
                 output.accept(ModItems.PATIENT_LOOT_BAG)
                 output.accept(ModItems.ARTIFICIAL_LOOT_BAG)
                 output.accept(ModItems.BACON_LOOT_BAG)
+
+                output.accept(ModBlocks.LOOT_RECYCLER)
+                output.accept(ModBlocks.BAG_OPENER)
+                output.accept(ModBlocks.BAG_STORAGE)
             }
             .build()
     }
