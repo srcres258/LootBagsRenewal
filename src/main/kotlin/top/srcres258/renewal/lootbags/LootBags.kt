@@ -1,9 +1,12 @@
 package top.srcres258.renewal.lootbags
 
-import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
+import top.srcres258.renewal.lootbags.block.ModBlocks
+import top.srcres258.renewal.lootbags.item.ModCreativeModeTabs
+import top.srcres258.renewal.lootbags.item.ModItems
 
 /**
  * Main mod class. Should be an `object` declaration annotated with `@Mod`.
@@ -20,5 +23,9 @@ object LootBags {
 
     init {
         LOGGER.info("$MOD_ID is loading...")
+
+        ModCreativeModeTabs.register(MOD_BUS)
+        ModItems.register(MOD_BUS)
+        ModBlocks.register(MOD_BUS)
     }
 }

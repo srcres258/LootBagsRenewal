@@ -1,0 +1,12 @@
+{
+    "item.lootbags.common_loot_bag": "Common Loot Bag",
+    "item.lootbags.uncommon_loot_bag": "Uncommon Loot Bag",
+    "item.lootbags.rare_loot_bag": "Rare Loot Bag",
+    "item.lootbags.epic_loot_bag": "Epic Loot Bag",
+    "item.lootbags.legendary_loot_bag": "Legendary Loot Bag",
+    "item.lootbags.patient_loot_bag": "Patient Loot Bag",
+    "item.lootbags.artificial_loot_bag": "Artificial Loot Bag",
+    "item.lootbags.bacon_loot_bag": "Bacon Loot Bag",
+
+    "creativetab.lootbags.loot_bags_tab": "Loot Bags"
+}
