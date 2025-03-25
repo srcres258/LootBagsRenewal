@@ -44,6 +44,8 @@ enum class LootBagType(
         const val AMOUNT_TO_NEXT_RARITY = 4
     }
 
+    val lootGenerator = LootGenerator(this)
+
     override fun asItem(): Item = when (this) {
         COMMON -> ModItems.COMMON_LOOT_BAG.get()
         UNCOMMON -> ModItems.UNCOMMON_LOOT_BAG.get()
