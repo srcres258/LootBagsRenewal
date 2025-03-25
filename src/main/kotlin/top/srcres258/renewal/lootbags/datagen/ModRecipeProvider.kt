@@ -59,10 +59,15 @@ class ModRecipeProvider(
                 if (type.creativeOnly || otherType.creativeOnly) {
                     continue
                 }
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, type.asItem())
-                    .requires(otherType, type.amountFactorEquivalentTo(otherType).toInt())
-                    .unlockedBy("has_${otherType.itemId}", has(otherType.asItem()))
-                    .save(recipeOutput, "${type.itemId}_from_${otherType.itemId}")
+                val amount = type.amountFactorEquivalentTo(otherType).toInt()
+                // Skip for amounts larger than 4. Ingredients with massive amounts may cause
+                // network errors during client-server communications.
+                if (amount <= 4) {
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, type.asItem())
+                        .requires(otherType, type.amountFactorEquivalentTo(otherType).toInt())
+                        .unlockedBy("has_${otherType.itemId}", has(otherType.asItem()))
+                        .save(recipeOutput, "${type.itemId}_from_${otherType.itemId}")
+                }
             }
         }
     }

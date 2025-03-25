@@ -12,5 +12,9 @@
     "block.lootbags.bag_opener": "开袋器",
     "block.lootbags.bag_storage": "战利品袋存储器",
 
-    "creativetab.lootbags.loot_bags_tab": "战利品袋"
+    "creativetab.lootbags.loot_bags_tab": "战利品袋",
+
+    "tooltip.lootbags.bag_storage.stored": "已存储：",
+    "tooltip.lootbags.bag_storage.needed": "将需要：",
+    "tooltip.lootbags.bag_storage.switch_bag_type": "切换袋子种类"
 }

@@ -21,6 +21,17 @@ object ModItems {
     val ARTIFICIAL_LOOT_BAG: DeferredItem<Item> = registerLootBagItem(LootBagType.ARTIFICIAL)
     val BACON_LOOT_BAG: DeferredItem<Item> = registerLootBagItem(LootBagType.BACON)
 
+    val LOOT_BAGS: List<DeferredItem<Item>> = listOf(
+        COMMON_LOOT_BAG,
+        UNCOMMON_LOOT_BAG,
+        RARE_LOOT_BAG,
+        EPIC_LOOT_BAG,
+        LEGENDARY_LOOT_BAG,
+        PATIENT_LOOT_BAG,
+        ARTIFICIAL_LOOT_BAG,
+        BACON_LOOT_BAG
+    )
+
     private fun registerLootBagItem(type: LootBagType): DeferredItem<Item> =
         ITEMS.register(type.itemId) { ->
             LootBagItem(type)

@@ -12,5 +12,9 @@
     "block.lootbags.bag_opener": "Bag Opener",
     "block.lootbags.bag_storage": "Bag Storage",
 
-    "creativetab.lootbags.loot_bags_tab": "Loot Bags"
+    "creativetab.lootbags.loot_bags_tab": "Loot Bags",
+
+    "tooltip.lootbags.bag_storage.stored": "Stored:",
+    "tooltip.lootbags.bag_storage.needed": "Needed:",
+    "tooltip.lootbags.bag_storage.switch_bag_type": "Cycle Bag"
 }
