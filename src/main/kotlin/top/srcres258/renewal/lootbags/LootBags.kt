@@ -1,9 +1,12 @@
 package top.srcres258.renewal.lootbags
 
+import net.minecraft.core.Direction
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
+import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import org.apache.logging.log4j.LogManager
@@ -34,6 +37,7 @@ object LootBags {
         LOGGER.info("$MOD_ID is loading...")
 
         MOD_BUS.addListener(::registerPayloadHandlers)
+        MOD_BUS.addListener(::registerCapabilities)
 
         ModCreativeModeTabs.register(MOD_BUS)
         ModItems.register(MOD_BUS)
@@ -44,6 +48,18 @@ object LootBags {
 
     fun registerPayloadHandlers(event: RegisterPayloadHandlersEvent) {
         ModNetworks.registerPayloadHandlers(event.registrar("1"))
+    }
+
+    fun registerCapabilities(event: RegisterCapabilitiesEvent) {
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntities.BAG_STORAGE.get(),
+        ) { blockEntity, side ->
+            when (side) {
+                Direction.DOWN -> blockEntity.outputItemHandler
+                else -> blockEntity.inputItemHandler
+            }
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])

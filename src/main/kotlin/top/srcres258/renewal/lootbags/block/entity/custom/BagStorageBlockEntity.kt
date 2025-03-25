@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.item.ModItems
@@ -48,13 +49,17 @@ class BagStorageBlockEntity(
         }
 
         override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
-            val resultStack = super.extractItem(slot, amount, simulate)
-            if (slot == OUTPUT_SLOT) {
-                storedBagAmount -= resultStack.count * targetBagType.amountFactorEquivalentTo(LootBagType.COMMON).toInt()
-            }
-            updateOutputSlot()
+            if (simulate) { // NOTE to do simulation check!!!
+                return super.extractItem(slot, amount, true)
+            } else {
+                val resultStack = super.extractItem(slot, amount, false)
+                if (slot == OUTPUT_SLOT) {
+                    storedBagAmount -= resultStack.count * targetBagType.amountFactorEquivalentTo(LootBagType.COMMON).toInt()
+                }
+                updateOutputSlot()
 
-            return resultStack
+                return resultStack
+            }
         }
 
         override fun onContentsChanged(slot: Int) {
@@ -63,6 +68,8 @@ class BagStorageBlockEntity(
                 updateOutputSlot()
             }
         }
+
+        override fun getSlotLimit(slot: Int): Int = LootBagType.COMMON.asItem().defaultMaxStackSize
 
         fun updateOutputSlot(setChanged: Boolean = true) {
             stacks[OUTPUT_SLOT] = ItemStack(targetBagType.asItem(), min(targetBagAmount, targetBagType.asItem().defaultMaxStackSize))
@@ -79,6 +86,36 @@ class BagStorageBlockEntity(
     }
 
     val itemHandler: ItemStackHandler = BagStorageItemHandler()
+    val inputItemHandler = object : IItemHandler {
+        override fun getSlots(): Int = 1
+
+        override fun getStackInSlot(slot: Int): ItemStack = ItemStack.EMPTY
+
+        override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack =
+            itemHandler.insertItem(INPUT_SLOT, stack, simulate)
+
+        override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack = ItemStack.EMPTY
+
+        override fun getSlotLimit(slot: Int): Int = itemHandler.getSlotLimit(INPUT_SLOT)
+
+        override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
+            itemHandler.isItemValid(INPUT_SLOT, stack)
+    }
+    val outputItemHandler = object : IItemHandler {
+        override fun getSlots(): Int = 1
+
+        override fun getStackInSlot(slot: Int): ItemStack = ItemStack.EMPTY
+
+        override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy()
+
+        override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack =
+            itemHandler.extractItem(OUTPUT_SLOT, amount, simulate)
+
+        override fun getSlotLimit(slot: Int): Int = itemHandler.getSlotLimit(OUTPUT_SLOT)
+
+        override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
+            itemHandler.isItemValid(OUTPUT_SLOT, stack)
+    }
 
     private var storedBagAmount: Int = 0
     private var targetBagType: LootBagType = LootBagType.COMMON
