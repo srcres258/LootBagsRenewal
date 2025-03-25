@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
+import top.srcres258.renewal.lootbags.component.ModDataComponents
 import top.srcres258.renewal.lootbags.item.ModCreativeModeTabs
 import top.srcres258.renewal.lootbags.item.ModItems
 import top.srcres258.renewal.lootbags.network.ModNetworks
@@ -44,6 +45,7 @@ object LootBags {
         ModBlocks.register(MOD_BUS)
         ModBlockEntities.register(MOD_BUS)
         ModMenuTypes.register(MOD_BUS)
+        ModDataComponents.register(MOD_BUS)
     }
 
     fun registerPayloadHandlers(event: RegisterPayloadHandlersEvent) {

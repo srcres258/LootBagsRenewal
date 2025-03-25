@@ -2,6 +2,7 @@ package top.srcres258.renewal.lootbags.block.entity.custom
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
+import top.srcres258.renewal.lootbags.component.ModDataComponents
 import top.srcres258.renewal.lootbags.item.ModItems
 import top.srcres258.renewal.lootbags.item.custom.LootBagItem
 import top.srcres258.renewal.lootbags.item.custom.LootBagType
@@ -117,7 +119,7 @@ class BagStorageBlockEntity(
             itemHandler.isItemValid(OUTPUT_SLOT, stack)
     }
 
-    private var storedBagAmount: Int = 0
+    var storedBagAmount: Int = 0
     private var targetBagType: LootBagType = LootBagType.COMMON
     private val targetBagAmount: Int
         get() = (storedBagAmount.toFloat() * LootBagType.COMMON.amountFactorEquivalentTo(targetBagType)).toInt()
@@ -193,6 +195,18 @@ class BagStorageBlockEntity(
             if (!level.isClientSide) {
                 level.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
             }
+        }
+    }
+
+    override fun collectImplicitComponents(components: DataComponentMap.Builder) {
+        // Adds the stored bags amount as a data component into the DataComponentMap builder.
+        components.set(ModDataComponents.BAGS_STORED.get(), storedBagAmount)
+    }
+
+    override fun applyImplicitComponents(componentInput: DataComponentInput) {
+        // Apply the stored bags data component if exists.
+        componentInput.get(ModDataComponents.BAGS_STORED.get())?.let { storedBags ->
+            storedBagAmount = storedBags
         }
     }
 }
