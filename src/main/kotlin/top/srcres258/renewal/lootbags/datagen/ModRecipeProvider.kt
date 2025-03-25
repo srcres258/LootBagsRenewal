@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.common.conditions.IConditionBuilder
 import top.srcres258.renewal.lootbags.block.ModBlocks
-import top.srcres258.renewal.lootbags.item.custom.LootBagType
+import top.srcres258.renewal.lootbags.util.LootBagType
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(

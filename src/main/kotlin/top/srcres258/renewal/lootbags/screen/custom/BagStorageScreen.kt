@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.srcres258.renewal.lootbags.LootBags
-import top.srcres258.renewal.lootbags.item.custom.LootBagType
+import top.srcres258.renewal.lootbags.util.LootBagType
 
 private val GUI_TEXTURE: ResourceLocation = ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, "textures/gui/bag_storage_gui.png")
 

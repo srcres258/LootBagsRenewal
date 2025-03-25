@@ -28,7 +28,7 @@ class ModBlockLootTableProvider(
                             LootItem.lootTableItem(block)
                                 .apply(
                                     CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                        .include(ModDataComponents.BAGS_STORED.get())
+                                        .include(ModDataComponents.BAG_STORAGE.get())
                                 )
                         )
                 ))

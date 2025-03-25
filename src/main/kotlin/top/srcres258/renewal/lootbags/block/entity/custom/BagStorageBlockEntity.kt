@@ -24,9 +24,10 @@ import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.component.ModDataComponents
 import top.srcres258.renewal.lootbags.item.ModItems
 import top.srcres258.renewal.lootbags.item.custom.LootBagItem
-import top.srcres258.renewal.lootbags.item.custom.LootBagType
-import top.srcres258.renewal.lootbags.item.custom.asLootBagType
+import top.srcres258.renewal.lootbags.util.LootBagType
+import top.srcres258.renewal.lootbags.util.asLootBagType
 import top.srcres258.renewal.lootbags.screen.custom.BagStorageMenu
+import top.srcres258.renewal.lootbags.util.BagStorageRecord
 import kotlin.math.min
 
 class BagStorageBlockEntity(
@@ -200,13 +201,18 @@ class BagStorageBlockEntity(
 
     override fun collectImplicitComponents(components: DataComponentMap.Builder) {
         // Adds the stored bags amount as a data component into the DataComponentMap builder.
-        components.set(ModDataComponents.BAGS_STORED.get(), storedBagAmount)
+        val bagStorage = BagStorageRecord(storedBagAmount, targetBagType.ordinal)
+        components.set(ModDataComponents.BAG_STORAGE.get(), bagStorage)
     }
 
     override fun applyImplicitComponents(componentInput: DataComponentInput) {
         // Apply the stored bags data component if exists.
-        componentInput.get(ModDataComponents.BAGS_STORED.get())?.let { storedBags ->
-            storedBagAmount = storedBags
+        componentInput.get(ModDataComponents.BAG_STORAGE.get())?.let { storedBags ->
+            storedBagAmount = storedBags.storedBagAmount
+            val ordinal = storedBags.targetBagTypeOrdinal
+            if (ordinal in LootBagType.entries.indices) {
+                targetBagType = LootBagType.entries[ordinal]
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.item.custom.LootBagItem
-import top.srcres258.renewal.lootbags.item.custom.LootBagType
+import top.srcres258.renewal.lootbags.util.LootBagType
 
 object ModItems {
     val ITEMS: DeferredRegister.Items = DeferredRegister.createItems(LootBags.MOD_ID)

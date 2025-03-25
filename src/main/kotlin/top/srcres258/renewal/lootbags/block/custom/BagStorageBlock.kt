@@ -2,7 +2,6 @@ package top.srcres258.renewal.lootbags.block.custom
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
-import net.minecraft.core.component.DataComponentMap
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.item.ItemEntity
@@ -15,11 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.BlockHitResult
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
-import top.srcres258.renewal.lootbags.component.ModDataComponents
 
 class BagStorageBlock(
     properties: Properties = Properties.of()

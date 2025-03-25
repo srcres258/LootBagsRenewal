@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 import top.srcres258.renewal.lootbags.LootBags
 
-data class ServerboundSelectLootBagTypePayload(val lootBagTypeIndex: Int) : CustomPacketPayload {
+data class ServerboundSelectLootBagTypePayload(val lootBagTypeOrdinal: Int) : CustomPacketPayload {
     companion object {
         val TYPE: CustomPacketPayload.Type<ServerboundSelectLootBagTypePayload> = CustomPacketPayload.Type(
             ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, "select_loot_bag_type")
@@ -15,7 +15,7 @@ data class ServerboundSelectLootBagTypePayload(val lootBagTypeIndex: Int) : Cust
 
         val STREAM_CODEC: StreamCodec<ByteBuf, ServerboundSelectLootBagTypePayload> = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
-            { it.lootBagTypeIndex },
+            { it.lootBagTypeOrdinal },
             ::ServerboundSelectLootBagTypePayload
         )
     }

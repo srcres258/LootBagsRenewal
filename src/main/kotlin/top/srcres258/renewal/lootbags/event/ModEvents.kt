@@ -1,15 +1,9 @@
 package top.srcres258.renewal.lootbags.event
 
-import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.phys.Vec3
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.event.level.BlockDropsEvent
 import top.srcres258.renewal.lootbags.LootBags
-import top.srcres258.renewal.lootbags.block.ModBlocks
-import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
-import top.srcres258.renewal.lootbags.component.ModDataComponents
 
 @EventBusSubscriber(modid = LootBags.MOD_ID)
 object ModEvents {

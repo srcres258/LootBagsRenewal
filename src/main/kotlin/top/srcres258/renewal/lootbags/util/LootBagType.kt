@@ -1,8 +1,9 @@
-package top.srcres258.renewal.lootbags.item.custom
+package top.srcres258.renewal.lootbags.util
 
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.ItemLike
 import top.srcres258.renewal.lootbags.item.ModItems
+import top.srcres258.renewal.lootbags.item.custom.LootBagItem
 import kotlin.math.pow
 
 enum class LootBagType(

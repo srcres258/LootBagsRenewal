@@ -11,7 +11,7 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import net.neoforged.neoforge.network.PacketDistributor
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
-import top.srcres258.renewal.lootbags.item.custom.LootBagType
+import top.srcres258.renewal.lootbags.util.LootBagType
 import top.srcres258.renewal.lootbags.network.custom.ServerboundSelectLootBagTypePayload
 import top.srcres258.renewal.lootbags.screen.ModMenuTypes
 import top.srcres258.renewal.lootbags.util.ContainerMenuHelper
