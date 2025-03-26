@@ -1,11 +1,9 @@
 package top.srcres258.renewal.lootbags.screen.custom
 
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -13,8 +11,10 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.util.LootBagType
+import top.srcres258.renewal.lootbags.util.setShaderTexture
 
-private val GUI_TEXTURE: ResourceLocation = ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, "textures/gui/bag_storage_gui.png")
+private val GUI_TEXTURE: ResourceLocation = ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID,
+    "textures/gui/bag_storage_gui.png")
 
 class BagStorageScreen(
     menu: BagStorageMenu,
@@ -50,10 +50,7 @@ class BagStorageScreen(
     }
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader)
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F)
-        RenderSystem.setShaderTexture(0, GUI_TEXTURE)
-
+        setShaderTexture(0, GUI_TEXTURE)
         guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
     }
 
@@ -68,9 +65,7 @@ class BagStorageScreen(
 
         // Render the unavailable icon if no target bag can be obtained.
         if (slot is BagStorageSlotItemHandler && slot.isOutputSlot && menu.targetBagAmount == 0) {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader)
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F)
-            RenderSystem.setShaderTexture(0, GUI_TEXTURE)
+            setShaderTexture(0, GUI_TEXTURE)
             renderUnavailableIcon(guiGraphics, slot.x, slot.y)
         }
     }

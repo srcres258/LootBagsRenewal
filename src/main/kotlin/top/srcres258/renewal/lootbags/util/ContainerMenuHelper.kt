@@ -1,7 +1,9 @@
 package top.srcres258.renewal.lootbags.util
 
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.srcres258.renewal.lootbags.LootBags
 
@@ -20,49 +22,66 @@ private const val VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT
 private const val VANILLA_FIRST_SLOT_INDEX = 0
 private const val BE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
 
-object ContainerMenuHelper {
-    /**
-     * NOTE: This function **assumes** that the beginning indices of slots are supposed to be **vanilla** slots!
-     * Ensure your slots' indices' order before calling this function.
-     */
-    fun quickMoveStack(
-        menu: AbstractContainerMenu,
-        player: Player,
-        index: Int,
-        beInventorySlotCount: Int,
-        moveItemStackTo: (ItemStack, Int, Int, Boolean) -> Boolean
-    ): ItemStack {
-        val sourceSlot = menu.slots[index]
-        if (!sourceSlot.hasItem()) {
+/**
+ * NOTE: This function **assumes** that the beginning indices of slots are supposed to be **vanilla** slots!
+ * Ensure your slots' indices' order before calling this function.
+ */
+fun quickMoveStack(
+    menu: AbstractContainerMenu,
+    player: Player,
+    index: Int,
+    beInventorySlotCount: Int,
+    moveItemStackTo: (ItemStack, Int, Int, Boolean) -> Boolean
+): ItemStack {
+    val sourceSlot = menu.slots[index]
+    if (!sourceSlot.hasItem()) {
+        return ItemStack.EMPTY
+    }
+    val sourceStack = sourceSlot.item
+    if (sourceStack.isEmpty) {
+        return ItemStack.EMPTY
+    }
+    val copyOfSourceStack = sourceStack.copy()
+
+    // Check if the slot clicked is one of the vanilla container slots
+    if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+        // This is a vanilla container slot so merge the stack into the tile inventory
+        if (!moveItemStackTo(sourceStack, BE_INVENTORY_FIRST_SLOT_INDEX,
+                BE_INVENTORY_FIRST_SLOT_INDEX + beInventorySlotCount, false)) {
             return ItemStack.EMPTY
         }
-        val sourceStack = sourceSlot.remove(Int.MAX_VALUE)
-        if (sourceStack.isEmpty) {
+    } else if (index < BE_INVENTORY_FIRST_SLOT_INDEX + beInventorySlotCount) {
+        // This is a TE slot so merge the stack into the players inventory
+        if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX,
+                VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
             return ItemStack.EMPTY
         }
-        val copyOfSourceStack = sourceStack.copy()
+    } else {
+        LootBags.LOGGER.warn("Invalid slot index: {}", index)
+        return ItemStack.EMPTY
+    }
 
-        // Check if the slot clicked is one of the vanilla container slots
-        if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
-            // This is a vanilla container slot so merge the stack into the tile inventory
-            if (!moveItemStackTo(sourceStack, BE_INVENTORY_FIRST_SLOT_INDEX,
-                    BE_INVENTORY_FIRST_SLOT_INDEX + beInventorySlotCount, false)) {
-                return ItemStack.EMPTY
-            }
-        } else if (index < BE_INVENTORY_FIRST_SLOT_INDEX + beInventorySlotCount) {
-            // This is a TE slot so merge the stack into the players inventory
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX,
-                    VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
-                return ItemStack.EMPTY
-            }
-        } else {
-            LootBags.LOGGER.warn("Invalid slot index: {}", index)
-            return ItemStack.EMPTY
+    // If stack size == 0 (the entire stack was moved) set slot contents to null
+    if (sourceStack.isEmpty) {
+        sourceSlot.set(ItemStack.EMPTY)
+    } else {
+        sourceSlot.setChanged()
+    }
+
+    sourceSlot.onTake(player, sourceStack)
+    return copyOfSourceStack
+}
+
+fun addPlayerInventorySlots(inv: Inventory, left: Int, top: Int, addSlot: (Slot) -> Slot) {
+    for (i in 0 ..< 3) {
+        for (j in 0 ..< 9) {
+            addSlot(Slot(inv, j + i * 9 + 9, left + j * 18, top + i * 18))
         }
+    }
+}
 
-        sourceSlot.setByPlayer(ItemStack.EMPTY, sourceStack.copy())
-
-        sourceSlot.onTake(player, sourceStack)
-        return copyOfSourceStack
+fun addPlayerHotbarSlots(inv: Inventory, left: Int, top: Int, addSlot: (Slot) -> Slot) {
+    for (i in 0 ..< 9) {
+        addSlot(Slot(inv, i, left + i * 18, top))
     }
 }

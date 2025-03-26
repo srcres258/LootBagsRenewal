@@ -11,10 +11,12 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import net.neoforged.neoforge.network.PacketDistributor
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
-import top.srcres258.renewal.lootbags.util.LootBagType
 import top.srcres258.renewal.lootbags.network.custom.ServerboundSelectLootBagTypePayload
 import top.srcres258.renewal.lootbags.screen.ModMenuTypes
-import top.srcres258.renewal.lootbags.util.ContainerMenuHelper
+import top.srcres258.renewal.lootbags.util.LootBagType
+import top.srcres258.renewal.lootbags.util.addPlayerHotbarSlots
+import top.srcres258.renewal.lootbags.util.addPlayerInventorySlots
+import top.srcres258.renewal.lootbags.util.quickMoveStack
 
 // THIS YOU HAVE TO DEFINE!
 private const val BE_INVENTORY_SLOT_COUNT = BagStorageBlockEntity.SLOTS_COUNT // must be the number of slots you have!
@@ -32,11 +34,20 @@ class BagStorageMenu(
         level: Level,
         extraData: FriendlyByteBuf
     ) : this(containerId, inv, level, level.getBlockEntity(extraData.readBlockPos()) as BagStorageBlockEntity,
-        SimpleContainerData(2))
+        SimpleContainerData(BagStorageBlockEntity.ContainerDataType.entries.size).also { data ->
+            /*
+             * Bug fix: calling `broadcastChanges` whenever a value within DataSlot gets changed may not actually
+             *  send changes to the server due to inner value-change-detecting mechanics of vanilla's DataSlot
+             *  (detects whether values have been changed by checking their previous values). Hence, we set the
+             *  initial value of some slots to be a fancy number (here we use 114514 as one of the choices)
+             *  to ensure DataSlot's value-change detection is actually going to work.
+             */
+            data.set(BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal, 114514)
+        })
 
     init {
-        addPlayerInventory(inv)
-        addPlayerHotbar(inv)
+        addPlayerInventorySlots(inv)
+        addPlayerHotbarSlots(inv)
 
         addSlot(SlotItemHandler(blockEntity.itemHandler, 0, 26, 16))
         addSlot(object : BagStorageSlotItemHandler(blockEntity.itemHandler, 1, 135, 16, true) {
@@ -74,51 +85,50 @@ class BagStorageMenu(
             override fun sendCarriedChange(containerMenu: AbstractContainerMenu, stack: ItemStack) {}
 
             override fun sendDataChange(container: AbstractContainerMenu, id: Int, value: Int) {
-                if (id == BagStorageBlockEntity.OUTPUT_SLOT && level.isClientSide) {
-                    // When the output slot changes, and it's on the client, send it to the server to update the target bag type.
-                    PacketDistributor.sendToServer(ServerboundSelectLootBagTypePayload(value))
+                if (id == BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal &&
+                    level.isClientSide) {
+                    // When the target loot bag type changes, and it's on the client,
+                    // send it to the server to update the target bag type.
+                    sendSelectLootBagTypePayloadToServer(value)
                 }
             }
         })
     }
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack =
-        ContainerMenuHelper.quickMoveStack(this, player, index, BE_INVENTORY_SLOT_COUNT, ::moveItemStackTo).also {
+        quickMoveStack(this, player, index, BE_INVENTORY_SLOT_COUNT, ::moveItemStackTo).also {
             broadcastChanges()
         }
 
     override fun stillValid(player: Player): Boolean =
         stillValid(ContainerLevelAccess.create(level, blockEntity.blockPos), player, ModBlocks.BAG_STORAGE.get())
 
-    private fun addPlayerInventory(inv: Inventory) {
-        val left = 8
-        val top = 66
-        for (i in 0 ..< 3) {
-            for (j in 0 ..< 9) {
-                addSlot(Slot(inv, j + i * 9 + 9, left + j * 18, top + i * 18))
-            }
-        }
+    private fun addPlayerInventorySlots(inv: Inventory) {
+        addPlayerInventorySlots(inv, 8, 66, ::addSlot)
     }
 
-    private fun addPlayerHotbar(inv: Inventory) {
-        val left = 8
-        val top = 123
-        for (i in 0 ..< 9) {
-            addSlot(Slot(inv, i, left + i * 18, top))
-        }
+    private fun addPlayerHotbarSlots(inv: Inventory) {
+        addPlayerHotbarSlots(inv, 8, 123, ::addSlot)
     }
 
     val storedBagAmount: Int
-        get() = data.get(0)
+        get() = data.get(BagStorageBlockEntity.ContainerDataType.STORED_BAG_AMOUNT.ordinal)
 
     var targetBagType: LootBagType
-        get() = LootBagType.entries[data.get(1)]
+        get() = LootBagType.entries[data.get(BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal) %
+                LootBagType.entries.size]
         set(value) {
-            data.set(1, value.ordinal)
+            data.set(BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal, value.ordinal)
             broadcastChanges()
         }
 
     val targetBagAmount: Int
-        get() = (data.get(0).toFloat() * LootBagType.COMMON.amountFactorEquivalentTo(
-            LootBagType.entries[data.get(1)])).toInt()
+        get() = (data.get(BagStorageBlockEntity.ContainerDataType.STORED_BAG_AMOUNT.ordinal).toFloat() *
+                LootBagType.COMMON.amountFactorEquivalentTo(LootBagType.entries[data
+                    .get(BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal) %
+                        LootBagType.entries.size])).toInt()
+}
+
+private fun sendSelectLootBagTypePayloadToServer(value: Int) {
+    PacketDistributor.sendToServer(ServerboundSelectLootBagTypePayload(value))
 }

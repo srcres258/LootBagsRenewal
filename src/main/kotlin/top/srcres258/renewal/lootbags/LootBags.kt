@@ -19,6 +19,7 @@ import top.srcres258.renewal.lootbags.item.ModCreativeModeTabs
 import top.srcres258.renewal.lootbags.item.ModItems
 import top.srcres258.renewal.lootbags.network.ModNetworks
 import top.srcres258.renewal.lootbags.screen.ModMenuTypes
+import top.srcres258.renewal.lootbags.screen.custom.BagOpenerScreen
 import top.srcres258.renewal.lootbags.screen.custom.BagStorageScreen
 
 /**
@@ -62,6 +63,15 @@ object LootBags {
                 else -> blockEntity.inputItemHandler
             }
         }
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntities.BAG_OPENER.get(),
+        ) { blockEntity, side ->
+            when (side) {
+                Direction.DOWN -> blockEntity.outputItemHandler
+                else -> blockEntity.inputItemHandler
+            }
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -69,6 +79,7 @@ object LootBags {
         @SubscribeEvent
         fun onRegisterScreens(event: RegisterMenuScreensEvent) {
             event.register(ModMenuTypes.BAG_STORAGE.get(), ::BagStorageScreen)
+            event.register(ModMenuTypes.BAG_OPENER.get(), ::BagOpenerScreen)
         }
     }
 }

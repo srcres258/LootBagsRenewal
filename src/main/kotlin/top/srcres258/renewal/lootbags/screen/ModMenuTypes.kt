@@ -9,6 +9,7 @@ import net.neoforged.neoforge.network.IContainerFactory
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import top.srcres258.renewal.lootbags.LootBags
+import top.srcres258.renewal.lootbags.screen.custom.BagOpenerMenu
 import top.srcres258.renewal.lootbags.screen.custom.BagStorageMenu
 
 object ModMenuTypes {
@@ -17,6 +18,10 @@ object ModMenuTypes {
     val BAG_STORAGE: DeferredHolder<MenuType<*>, MenuType<BagStorageMenu>> =
         registerContainerMenu("bag_storage") { containerId, inv, data ->
             BagStorageMenu(containerId, inv, inv.player.level(), data)
+        }
+    val BAG_OPENER: DeferredHolder<MenuType<*>, MenuType<BagOpenerMenu>> =
+        registerContainerMenu("bag_opener") { containerId, inv, data ->
+            BagOpenerMenu(containerId, inv, inv.player.level(), data)
         }
 
     private fun <T : AbstractContainerMenu> registerContainerMenu(

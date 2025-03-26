@@ -15,41 +15,31 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.component.ModDataComponents
-import top.srcres258.renewal.lootbags.item.ModItems
 import top.srcres258.renewal.lootbags.item.custom.LootBagItem
-import top.srcres258.renewal.lootbags.util.LootBagType
-import top.srcres258.renewal.lootbags.util.asLootBagType
 import top.srcres258.renewal.lootbags.screen.custom.BagStorageMenu
 import top.srcres258.renewal.lootbags.util.BagStorageRecord
+import top.srcres258.renewal.lootbags.util.LootBagType
+import top.srcres258.renewal.lootbags.util.asLootBagType
+import top.srcres258.renewal.lootbags.util.setChangedAndUpdateBlock
 import kotlin.math.min
 
 class BagStorageBlockEntity(
     pos: BlockPos,
     blockState: BlockState
 ) : BlockEntity(ModBlockEntities.BAG_STORAGE.get(), pos, blockState), MenuProvider {
-    private inner class BagStorageItemHandler : ItemStackHandler(SLOTS_COUNT) {
-        override fun isItemValid(slot: Int, stack: ItemStack): Boolean {
-            when (slot) {
-                INPUT_SLOT -> {
-                    for (bagItem in ModItems.LOOT_BAGS) {
-                        if (stack.item == bagItem.get()) {
-                            return true
-                        }
-                    }
-                    // Refuse to insert items which are not loot bags into the input slot.
-                    return false
-                }
-                // Refuse to insert items into the output slot and other slots.
-                else -> return false
-            }
-        }
+    enum class ContainerDataType {
+        STORED_BAG_AMOUNT,
+        TARGET_BAG_TYPE
+    }
+
+    private inner class BagStorageItemHandler : LootBagItemHandler(SLOTS_COUNT) {
+        override fun isInputSlot(slot: Int): Boolean = slot == INPUT_SLOT
 
         override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
             if (simulate) { // NOTE to do simulation check!!!
@@ -71,8 +61,6 @@ class BagStorageBlockEntity(
                 updateOutputSlot()
             }
         }
-
-        override fun getSlotLimit(slot: Int): Int = LootBagType.COMMON.asItem().defaultMaxStackSize
 
         fun updateOutputSlot(setChanged: Boolean = true) {
             stacks[OUTPUT_SLOT] = ItemStack(targetBagType.asItem(), min(targetBagAmount, targetBagType.asItem().defaultMaxStackSize))
@@ -107,7 +95,7 @@ class BagStorageBlockEntity(
     val outputItemHandler = object : IItemHandler {
         override fun getSlots(): Int = 1
 
-        override fun getStackInSlot(slot: Int): ItemStack = ItemStack.EMPTY
+        override fun getStackInSlot(slot: Int): ItemStack = itemHandler.getStackInSlot(OUTPUT_SLOT)
 
         override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy()
 
@@ -126,15 +114,15 @@ class BagStorageBlockEntity(
         get() = (storedBagAmount.toFloat() * LootBagType.COMMON.amountFactorEquivalentTo(targetBagType)).toInt()
     private val data = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
-            0 -> storedBagAmount
-            1 -> targetBagType.ordinal
+            ContainerDataType.STORED_BAG_AMOUNT.ordinal -> storedBagAmount
+            ContainerDataType.TARGET_BAG_TYPE.ordinal -> targetBagType.ordinal
             else -> 0
         }
 
         override fun set(index: Int, value: Int) {
             when (index) {
-                0 -> storedBagAmount = value
-                1 -> {
+                ContainerDataType.STORED_BAG_AMOUNT.ordinal -> storedBagAmount = value
+                ContainerDataType.TARGET_BAG_TYPE.ordinal -> {
                     targetBagType = LootBagType.entries[value]
                 }
             }
@@ -191,12 +179,7 @@ class BagStorageBlockEntity(
         saveWithoutMetadata(registries)
 
     private fun setChangedAndUpdateBlock() {
-        setChanged()
-        level?.let { level ->
-            if (!level.isClientSide) {
-                level.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
-            }
-        }
+        setChangedAndUpdateBlock(level)
     }
 
     override fun collectImplicitComponents(components: DataComponentMap.Builder) {
