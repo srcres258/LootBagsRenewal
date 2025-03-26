@@ -15,6 +15,10 @@
     "creativetab.lootbags.loot_bags_tab": "Loot Bags",
 
     "tooltip.lootbags.bag_storage.stored": "Stored:",
+    "tooltip.lootbags.bag_storage.stored_with_count": "Stored: %d",
     "tooltip.lootbags.bag_storage.needed": "Needed:",
-    "tooltip.lootbags.bag_storage.switch_bag_type": "Cycle Bag"
+    "tooltip.lootbags.bag_storage.output_type": "Output Bag Type: %s",
+    "tooltip.lootbags.bag_storage.switch_bag_type": "Cycle Bag",
+
+    "tooltip.lootbags.press_shift_for_details": "Press Shift for Details..."
 }

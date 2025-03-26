@@ -1,12 +1,16 @@
 package top.srcres258.renewal.lootbags.block.custom
 
 import com.mojang.serialization.MapCodec
+import net.minecraft.client.resources.language.I18n
 import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
@@ -17,6 +21,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
+import top.srcres258.renewal.lootbags.component.ModDataComponents
+import top.srcres258.renewal.lootbags.util.LootBagType
 
 class BagStorageBlock(
     properties: Properties = Properties.of()
@@ -101,5 +107,31 @@ class BagStorageBlock(
         }
 
         return super.playerWillDestroy(level, pos, state, player)
+    }
+
+    override fun appendHoverText(
+        stack: ItemStack,
+        context: Item.TooltipContext,
+        tooltipComponents: MutableList<Component>,
+        tooltipFlag: TooltipFlag
+    ) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
+
+        val bagStorage = stack.get(ModDataComponents.BAG_STORAGE.get())
+        if (bagStorage != null) {
+            if (tooltipFlag.hasShiftDown()) {
+                tooltipComponents.add(Component.translatable(
+                    "tooltip.lootbags.bag_storage.stored_with_count",
+                    bagStorage.storedBagAmount
+                ))
+                tooltipComponents.add(Component.translatable(
+                    "tooltip.lootbags.bag_storage.output_type",
+                    LootBagType.entries[bagStorage.targetBagTypeOrdinal % LootBagType.entries.size]
+                        .asItem().description.string
+                ))
+            } else {
+                tooltipComponents.add(Component.translatable("tooltip.lootbags.press_shift_for_details"))
+            }
+        }
     }
 }

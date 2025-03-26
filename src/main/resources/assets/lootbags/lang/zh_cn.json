@@ -15,6 +15,10 @@
     "creativetab.lootbags.loot_bags_tab": "战利品袋",
 
     "tooltip.lootbags.bag_storage.stored": "已存储：",
+    "tooltip.lootbags.bag_storage.stored_with_count": "已存储：%d",
     "tooltip.lootbags.bag_storage.needed": "将需要：",
-    "tooltip.lootbags.bag_storage.switch_bag_type": "切换袋子种类"
+    "tooltip.lootbags.bag_storage.output_type": "输出袋子类型：%s",
+    "tooltip.lootbags.bag_storage.switch_bag_type": "切换袋子种类",
+
+    "tooltip.lootbags.press_shift_for_details": "按Shift键以查看详情..."
 }
