@@ -22,8 +22,9 @@ class LootBagItem(
             val loots = type.lootGenerator.generateLoot(level.random)
             for (loot in loots) {
                 val pos = player.eyePosition
-                val entity = ItemEntity(level, pos.x, pos.y, pos.z, loot)
-                entity.setShootMovementFromRotation(player, player.xRot, player.yRot, 0.0F, 0.5F, 0.15F)
+                val entity = ItemEntity(level, pos.x, pos.y - 0.1, pos.z, loot)
+                entity.setShootMovementFromRotation(player, player.xRot, player.yRot, 0.0F, 0.25F, 0.1F)
+                entity.setDefaultPickUpDelay()
                 level.addFreshEntity(entity)
             }
         }
