@@ -1,33 +1,47 @@
 package top.srcres258.renewal.lootbags.event
 
+import net.minecraft.util.Mth
+import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
-import net.neoforged.neoforge.event.level.BlockDropsEvent
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent
 import top.srcres258.renewal.lootbags.LootBags
+import top.srcres258.renewal.lootbags.util.LootBagType
+import top.srcres258.renewal.lootbags.util.newItemEntitiesForDropping
 
 @EventBusSubscriber(modid = LootBags.MOD_ID)
 object ModEvents {
     @SubscribeEvent
-    fun onBlockDrops(event: BlockDropsEvent) {
-//        val blockEntity = event.blockEntity
-//        if (blockEntity != null && blockEntity is BagStorageBlockEntity) {
-//            // For BagStorageBlock's destroy, the stored bags need to be saved into the item stack
-//            // which is going to be dropped.
-//
-//            val storedBags = blockEntity.storedBagAmount
-//            val stack = ItemStack(ModBlocks.BAG_STORAGE.get())
-//            stack.set(ModDataComponents.BAGS_STORED.get(), storedBags)
-//
-//            val pos = if (event.drops.isEmpty()) {
-//                Vec3(event.pos.x.toDouble(), event.pos.y.toDouble(), event.pos.z.toDouble())
-//            } else {
-//                event.drops.first().position()
-//            }
-//            val itemEntity = ItemEntity(event.level, pos.x, pos.y, pos.z, stack)
-//            if (event.drops.isNotEmpty()) {
-//                event.drops.clear()
-//            }
-//            event.drops.add(itemEntity)
-//        }
+    fun onLivingDrops(event: LivingDropsEvent) {
+        // Try to add loot bags to the drops list whenever a living entity drops items.
+        for (bagType in LootBagType.entries) {
+            if (!bagType.droppable) {
+                continue
+            }
+
+            val random = event.entity.level().random
+            val rand = Mth.nextDouble(random, 0.0, 1.0)
+            if (rand <= bagType.dropChance) {
+                val entityPos = event.entity.getPosition(0F)
+                val amount = random.nextIntBetweenInclusive(bagType.dropAmountRange.first.toInt(),
+                    bagType.dropAmountRange.last.toInt())
+                if (amount <= 0) {
+                    continue
+                }
+                val stack = ItemStack(bagType.asItem(), amount)
+                val entities = newItemEntitiesForDropping(event.entity.level(), entityPos, stack)
+                event.drops.addAll(entities)
+
+                LootBags.LOGGER.debug(
+                    "Generated loot bags of type {} amount {} for LivingEntity {} at position {}, level {}",
+                    bagType,
+                    amount,
+                    event.entity.type.description.string,
+                    entityPos,
+                    event.entity.level().dimension().location()
+                )
+                break
+            }
+        }
     }
 }

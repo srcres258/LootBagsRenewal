@@ -14,9 +14,9 @@ enum class LootBagType(
     /**
      * Rarity of the loot bag type, the higher the rarity is, the rarer the loot bag is.
      */
-    val rarity: Int,
+    val rarity: UInt,
     /**
-     * Whether this type of loot bag can be dropped by vanilla through loot tables of entities.
+     * Whether this type of loot bag can be dropped by living entities.
      *
      * If set to `false`, it can only be obtained through loot bag storage blocks or by crafting.
      */
@@ -24,16 +24,24 @@ enum class LootBagType(
     /**
      * Whether this type of loot bag is only available in creative mode (neither available in survival nor by crafting).
      */
-    val creativeOnly: Boolean
+    val creativeOnly: Boolean,
+    /**
+     * Chance for this loot bag type to be dropped, from 0.0 to 1.0 inclusive.
+     */
+    val dropChance: Double,
+    /**
+     * Amount range for this loot bag type to be dropped.
+     */
+    val dropAmountRange: UIntRange
 ) : ItemLike {
-    COMMON("common_loot_bag", 0, true, false),
-    UNCOMMON("uncommon_loot_bag", 1, true, false),
-    RARE("rare_loot_bag", 2, true, false),
-    EPIC("epic_loot_bag", 3, true, false),
-    LEGENDARY("legendary_loot_bag", 4, true, false),
-    PATIENT("patient_loot_bag", 5, false, false),
-    ARTIFICIAL("artificial_loot_bag", 6, false, true),
-    BACON("bacon_loot_bag", 0, true, false);
+    COMMON("common_loot_bag", 0U, true, false, 0.4, 0U .. 5U),
+    UNCOMMON("uncommon_loot_bag", 1U, true, false, 0.1, 0U .. 3U),
+    RARE("rare_loot_bag", 2U, true, false, 0.025, 0U .. 2U),
+    EPIC("epic_loot_bag", 3U, true, false, 0.00625, 0U .. 2U),
+    LEGENDARY("legendary_loot_bag", 4U, true, false, 0.0015625, 0U .. 1U),
+    PATIENT("patient_loot_bag", 5U, true, false, 0.000390625, 0U .. 1U),
+    ARTIFICIAL("artificial_loot_bag", 6U, false, true, 0.0, 0U .. 0U),
+    BACON("bacon_loot_bag", 0U, true, false, 0.4, 0U .. 10U);
 
     companion object {
         /**
@@ -65,7 +73,7 @@ enum class LootBagType(
      * vice versa.
      */
     fun amountFactorEquivalentTo(other: LootBagType): Float =
-        AMOUNT_TO_NEXT_RARITY.toFloat().pow(this.rarity - other.rarity)
+        AMOUNT_TO_NEXT_RARITY.toFloat().pow(this.rarity.toInt() - other.rarity.toInt())
 }
 
 fun LootBagItem.asLootBagType(): LootBagType = when (this) {
