@@ -82,7 +82,7 @@ class BagOpenerBlockEntity(
             }
         }
 
-        override fun getCount(): Int = 2
+        override fun getCount(): Int = ContainerDataType.entries.size
     }
 
     override fun getDisplayName(): Component = Component.translatable("block.lootbags.bag_opener")

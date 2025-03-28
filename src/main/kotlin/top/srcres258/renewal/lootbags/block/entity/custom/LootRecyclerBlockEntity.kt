@@ -17,25 +17,21 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.component.ModDataComponents
-import top.srcres258.renewal.lootbags.item.custom.LootBagItem
-import top.srcres258.renewal.lootbags.screen.custom.BagStorageMenu
+import top.srcres258.renewal.lootbags.screen.custom.LootRecyclerMenu
 import top.srcres258.renewal.lootbags.util.BagStorageRecord
 import top.srcres258.renewal.lootbags.util.LootBagType
-import top.srcres258.renewal.lootbags.util.asLootBagType
 import top.srcres258.renewal.lootbags.util.setChangedAndUpdateBlock
 import kotlin.math.min
 
-class BagStorageBlockEntity(
+class LootRecyclerBlockEntity(
     pos: BlockPos,
     blockState: BlockState
-) : BlockEntity(ModBlockEntities.BAG_STORAGE.get(), pos, blockState), MenuProvider {
+) : BlockEntity(ModBlockEntities.LOOT_RECYCLER.get(), pos, blockState), MenuProvider {
     enum class ContainerDataType {
-        STORED_BAG_AMOUNT,
-        TARGET_BAG_TYPE
+        STORED_BAG_AMOUNT
     }
 
     private inner class BagStorageItemHandler : LootBagItemHandler(SLOTS_COUNT) {
@@ -77,69 +73,37 @@ class BagStorageBlockEntity(
     }
 
     val itemHandler: ItemStackHandler = BagStorageItemHandler()
-    val inputItemHandler = object : IItemHandler {
-        override fun getSlots(): Int = 1
-
-        override fun getStackInSlot(slot: Int): ItemStack = ItemStack.EMPTY
-
-        override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack =
-            itemHandler.insertItem(INPUT_SLOT, stack, simulate)
-
-        override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack = ItemStack.EMPTY
-
-        override fun getSlotLimit(slot: Int): Int = itemHandler.getSlotLimit(INPUT_SLOT)
-
-        override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
-            itemHandler.isItemValid(INPUT_SLOT, stack)
-    }
-    val outputItemHandler = object : IItemHandler {
-        override fun getSlots(): Int = 1
-
-        override fun getStackInSlot(slot: Int): ItemStack = itemHandler.getStackInSlot(OUTPUT_SLOT)
-
-        override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy()
-
-        override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack =
-            itemHandler.extractItem(OUTPUT_SLOT, amount, simulate)
-
-        override fun getSlotLimit(slot: Int): Int = itemHandler.getSlotLimit(OUTPUT_SLOT)
-
-        override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
-            itemHandler.isItemValid(OUTPUT_SLOT, stack)
-    }
 
     var storedBagAmount: Int = 0
-    private var targetBagType: LootBagType = LootBagType.COMMON
+    /**
+     * Currently `targetBagType` field is constant (no option to change it yet).
+     */
+    private val targetBagType: LootBagType = LootBagType.COMMON
     private val targetBagAmount: Int
         get() = (storedBagAmount.toFloat() * LootBagType.COMMON.amountFactorEquivalentTo(targetBagType)).toInt()
     private val data = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
             ContainerDataType.STORED_BAG_AMOUNT.ordinal -> storedBagAmount
-            ContainerDataType.TARGET_BAG_TYPE.ordinal -> targetBagType.ordinal
             else -> 0
         }
 
         override fun set(index: Int, value: Int) {
             when (index) {
                 ContainerDataType.STORED_BAG_AMOUNT.ordinal -> storedBagAmount = value
-                ContainerDataType.TARGET_BAG_TYPE.ordinal -> {
-                    targetBagType = LootBagType.entries[value]
-                }
             }
         }
 
         override fun getCount(): Int = ContainerDataType.entries.size
     }
 
-    override fun getDisplayName(): Component = Component.translatable("block.lootbags.bag_storage")
+    override fun getDisplayName(): Component = Component.translatable("block.lootbags.loot_recycler")
 
     override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
-        BagStorageMenu(containerId, playerInventory, player.level(), this, data)
+        LootRecyclerMenu(containerId, playerInventory, player.level(), this, data)
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         tag.put("inventory", itemHandler.serializeNBT(registries))
         tag.putInt("stored_bag_amount", storedBagAmount)
-        tag.putInt("target_bag_type", targetBagType.ordinal)
 
         super.saveAdditional(tag, registries)
     }
@@ -149,27 +113,10 @@ class BagStorageBlockEntity(
 
         itemHandler.deserializeNBT(registries, tag.getCompound("inventory"))
         storedBagAmount = tag.getInt("stored_bag_amount")
-        val targetBagTypeOrdinal = tag.getInt("target_bag_type")
-        if (targetBagTypeOrdinal in LootBagType.entries.indices) { // Make sure the ordinal is valid.
-            targetBagType = LootBagType.entries[targetBagTypeOrdinal]
-        }
     }
 
     fun tick(level: Level, pos: BlockPos, state: BlockState) {
-        val inputStack = itemHandler.getStackInSlot(INPUT_SLOT).copy()
-        val inputItem = inputStack.item
-        if (!inputStack.isEmpty && inputItem is LootBagItem) {
-            // If input is detected, consume it and increase storedBagAmount accordingly.
-            itemHandler.extractItem(INPUT_SLOT, inputStack.count, false)
-            storedBagAmount += (inputStack.count.toFloat() * inputItem.asLootBagType()
-                .amountFactorEquivalentTo(LootBagType.COMMON)).toInt()
-        }
-
-        // Update the output slot every tick to keep everything valid. May bring some loss in performance,
-        // but I don't know what to do. (networking within Minecraft's codebase is too complex to carry out
-        // a triggering-based implementation on the update of block entity status, so I took the easiest
-        // polling-based implementation.)
-        (itemHandler as BagStorageItemHandler).updateOutputSlot()
+        //todo
     }
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
@@ -192,10 +139,6 @@ class BagStorageBlockEntity(
         // Apply the stored bags data component if exists.
         componentInput.get(ModDataComponents.BAG_STORAGE.get())?.let { storedBags ->
             storedBagAmount = storedBags.storedBagAmount
-            val ordinal = storedBags.targetBagTypeOrdinal
-            if (ordinal in LootBagType.entries.indices) {
-                targetBagType = LootBagType.entries[ordinal]
-            }
         }
     }
 }

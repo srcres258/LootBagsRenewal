@@ -123,10 +123,7 @@ class BagStorageMenu(
         }
 
     val targetBagAmount: Int
-        get() = (data.get(BagStorageBlockEntity.ContainerDataType.STORED_BAG_AMOUNT.ordinal).toFloat() *
-                LootBagType.COMMON.amountFactorEquivalentTo(LootBagType.entries[data
-                    .get(BagStorageBlockEntity.ContainerDataType.TARGET_BAG_TYPE.ordinal) %
-                        LootBagType.entries.size])).toInt()
+        get() = (storedBagAmount.toFloat() * LootBagType.COMMON.amountFactorEquivalentTo(targetBagType)).toInt()
 }
 
 private fun sendSelectLootBagTypePayloadToServer(value: Int) {

@@ -21,6 +21,7 @@ import top.srcres258.renewal.lootbags.network.ModNetworks
 import top.srcres258.renewal.lootbags.screen.ModMenuTypes
 import top.srcres258.renewal.lootbags.screen.custom.BagOpenerScreen
 import top.srcres258.renewal.lootbags.screen.custom.BagStorageScreen
+import top.srcres258.renewal.lootbags.screen.custom.LootRecyclerScreen
 
 /**
  * Main mod class. Should be an `object` declaration annotated with `@Mod`.
@@ -80,6 +81,7 @@ object LootBags {
         fun onRegisterScreens(event: RegisterMenuScreensEvent) {
             event.register(ModMenuTypes.BAG_STORAGE.get(), ::BagStorageScreen)
             event.register(ModMenuTypes.BAG_OPENER.get(), ::BagOpenerScreen)
+            event.register(ModMenuTypes.LOOT_RECYCLER.get(), ::LootRecyclerScreen)
         }
     }
 }

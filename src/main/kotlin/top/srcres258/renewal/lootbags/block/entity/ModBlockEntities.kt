@@ -8,6 +8,7 @@ import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.block.entity.custom.BagOpenerBlockEntity
 import top.srcres258.renewal.lootbags.block.entity.custom.BagStorageBlockEntity
+import top.srcres258.renewal.lootbags.block.entity.custom.LootRecyclerBlockEntity
 import java.util.function.Supplier
 
 object ModBlockEntities {
@@ -21,6 +22,11 @@ object ModBlockEntities {
     val BAG_OPENER: Supplier<BlockEntityType<BagOpenerBlockEntity>> =
         BLOCK_ENTITIES.register("bag_opener") { ->
             BlockEntityType.Builder.of(::BagOpenerBlockEntity, ModBlocks.BAG_OPENER.get())
+                .build(null) // Just pass null to `dataType` parameter since it is not used by our BlockEntity.
+        }
+    val LOOT_RECYCLER: Supplier<BlockEntityType<LootRecyclerBlockEntity>> =
+        BLOCK_ENTITIES.register("loot_recycler") { ->
+            BlockEntityType.Builder.of(::LootRecyclerBlockEntity, ModBlocks.LOOT_RECYCLER.get())
                 .build(null) // Just pass null to `dataType` parameter since it is not used by our BlockEntity.
         }
 

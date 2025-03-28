@@ -1,7 +1,6 @@
 package top.srcres258.renewal.lootbags.screen.custom
 
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -9,43 +8,25 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.srcres258.renewal.lootbags.LootBags
-import top.srcres258.renewal.lootbags.util.LootBagType
 import top.srcres258.renewal.lootbags.util.setShaderTexture
 
 private val GUI_TEXTURE: ResourceLocation = ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID,
+    "textures/gui/loot_recycler_gui.png")
+private val BAG_STORAGE_GUI_TEXTURE: ResourceLocation = ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID,
     "textures/gui/bag_storage_gui.png")
 
-class BagStorageScreen(
-    menu: BagStorageMenu,
+class LootRecyclerScreen(
+    menu: LootRecyclerMenu,
     playerInventory: Inventory,
     title: Component
-) : AbstractContainerScreen<BagStorageMenu>(menu, playerInventory, title) {
-    private lateinit var switchBagTypeButton: Button
-
+) : AbstractContainerScreen<LootRecyclerMenu>(menu, playerInventory, title) {
     init {
+        titleLabelX = 8
+        titleLabelY = 4
         imageWidth = 176
-        imageHeight = 147
+        imageHeight = 131
         inventoryLabelX = 8
-        inventoryLabelY = 54
-    }
-
-    override fun init() {
-        super.init()
-
-        switchBagTypeButton = addRenderableWidget(
-            object : Button(builder(Component.translatable("tooltip.lootbags.bag_storage.switch_bag_type")) {
-                var bagTypeIndex = (menu.targetBagType.ordinal + 1) % LootBagType.entries.size
-                while (LootBagType.entries[bagTypeIndex].creativeOnly) {
-                    bagTypeIndex++
-                    if (bagTypeIndex >= LootBagType.entries.size) {
-                        bagTypeIndex %= LootBagType.entries.size
-                    }
-                }
-                menu.targetBagType = LootBagType.entries[bagTypeIndex]
-            }.bounds(leftPos + 44, topPos + 40, 90, 16)) {
-                override fun isHoveredOrFocused(): Boolean = isHovered
-            }
-        )
+        inventoryLabelY = 38
     }
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
@@ -64,7 +45,8 @@ class BagStorageScreen(
 
         // Render the unavailable icon if no target bag can be obtained.
         if (slot is BagStorageSlotItemHandler && slot.isOutputSlot && menu.targetBagAmount == 0) {
-            setShaderTexture(0, GUI_TEXTURE)
+            // The unavailable icon texture is inside the bag storage GUI texture, so switch to that texture at first.
+            setShaderTexture(0, BAG_STORAGE_GUI_TEXTURE)
             renderUnavailableIcon(guiGraphics, slot.x, slot.y)
         }
     }
@@ -72,20 +54,12 @@ class BagStorageScreen(
     override fun renderLabels(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int) {
         super.renderLabels(guiGraphics, mouseX, mouseY)
 
-        // Stored
         guiGraphics.drawString(font, Component.translatable("tooltip.lootbags.bag_storage.stored"),
-            44, 16, 0x404040, false)
-        guiGraphics.drawString(font, menu.storedBagAmount.toString(),
-            44, 25, 0x404040, false)
-        // Needed
-        val neededAmount = menu.targetBagType.amountFactorEquivalentTo(LootBagType.COMMON).toInt()
-        guiGraphics.drawString(font, Component.translatable("tooltip.lootbags.bag_storage.needed"),
-            88, 16, 0x404040, false)
-        guiGraphics.drawString(font, neededAmount.toString(),
-            88, 25, 0x404040, false)
+            62, 15, 0x404040, false)
+        guiGraphics.drawString(font, menu.storedBagAmount.toString(), 62, 24, 0x404040, false)
     }
 }
 
 private fun renderUnavailableIcon(guiGraphics: GuiGraphics, originX: Int, originY: Int) {
-    guiGraphics.blit(GUI_TEXTURE, originX, originY, 176, 0, 16, 16)
+    guiGraphics.blit(BAG_STORAGE_GUI_TEXTURE, originX, originY, 176, 0, 16, 16)
 }
