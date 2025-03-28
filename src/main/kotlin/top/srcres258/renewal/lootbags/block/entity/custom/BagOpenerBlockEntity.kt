@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.Containers
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.SimpleContainer
@@ -18,6 +19,9 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.loot.LootParams
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams
+import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.item.ModItems
@@ -190,13 +194,21 @@ class BagOpenerBlockEntity(
         }
         val bagItem = inputItemStack.item as? LootBagItem ?: return
         val level = this.level ?: return
+        val serverLevel = level as? ServerLevel ?: return
 
         // Consume one item from the input slot and put the output loot item into the output slots.
         val extracted = inputItemHandler.extractItem(inputSlot, 1, false)
         if (extracted.isEmpty) {
             return
         }
-        val loots = bagItem.asLootBagType().lootGenerator.generateLoot(level.random)
+        val pos = Vec3(blockPos.x.toDouble() + 0.5, blockPos.y.toDouble() + 0.5, blockPos.z.toDouble() + 0.5)
+        val loots = bagItem.asLootBagType().lootGenerator.generateLoot(
+            serverLevel,
+            LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.BLOCK_STATE, blockState)
+                .withParameter(LootContextParams.BLOCK_ENTITY, this)
+                .withParameter(LootContextParams.ORIGIN, pos)
+        )
         for (loot in loots) {
             if (!putIntoOutputSlots(loot)) {
                 break

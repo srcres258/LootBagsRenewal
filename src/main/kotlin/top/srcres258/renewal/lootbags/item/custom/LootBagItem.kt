@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.storage.loot.LootParams
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import top.srcres258.renewal.lootbags.util.LootBagType
 import top.srcres258.renewal.lootbags.util.setShootMovementFromRotation
 
@@ -18,8 +20,17 @@ class LootBagItem(
 ) : Item(properties) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(usedHand)
-        if (!level.isClientSide) {
-            val loots = type.lootGenerator.generateLoot(level.random)
+        if (!level.isClientSide && level is ServerLevel) {
+            val loots = type.lootGenerator.generateLoot(
+                level,
+                LootParams.Builder(level)
+                    .withParameter(LootContextParams.THIS_ENTITY, player)
+                    .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
+                    .withParameter(LootContextParams.ATTACKING_ENTITY, player)
+                    .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, player)
+                    .withParameter(LootContextParams.ORIGIN, player.getPosition(0F))
+                    .withParameter(LootContextParams.TOOL, stack)
+            )
             for (loot in loots) {
                 val pos = player.eyePosition
                 val entity = ItemEntity(level, pos.x, pos.y - 0.1, pos.z, loot)
