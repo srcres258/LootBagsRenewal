@@ -16,18 +16,15 @@ object ModBlockEntities {
 
     val BAG_STORAGE: Supplier<BlockEntityType<BagStorageBlockEntity>> =
         BLOCK_ENTITIES.register("bag_storage") { ->
-            BlockEntityType.Builder.of(::BagStorageBlockEntity, ModBlocks.BAG_STORAGE.get())
-                .build(null) // Just pass null to `dataType` parameter since it is not used by our BlockEntity.
+            BlockEntityType(::BagStorageBlockEntity, ModBlocks.BAG_STORAGE.get())
         }
     val BAG_OPENER: Supplier<BlockEntityType<BagOpenerBlockEntity>> =
         BLOCK_ENTITIES.register("bag_opener") { ->
-            BlockEntityType.Builder.of(::BagOpenerBlockEntity, ModBlocks.BAG_OPENER.get())
-                .build(null) // Just pass null to `dataType` parameter since it is not used by our BlockEntity.
+            BlockEntityType(::BagOpenerBlockEntity, ModBlocks.BAG_OPENER.get())
         }
     val LOOT_RECYCLER: Supplier<BlockEntityType<LootRecyclerBlockEntity>> =
         BLOCK_ENTITIES.register("loot_recycler") { ->
-            BlockEntityType.Builder.of(::LootRecyclerBlockEntity, ModBlocks.LOOT_RECYCLER.get())
-                .build(null) // Just pass null to `dataType` parameter since it is not used by our BlockEntity.
+            BlockEntityType(::LootRecyclerBlockEntity, ModBlocks.LOOT_RECYCLER.get())
         }
 
     fun register(eventBus: IEventBus) {

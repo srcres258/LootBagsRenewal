@@ -4,12 +4,12 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '1.0.11'
+    id 'net.neoforged.moddev' version '1.0.21'
 
     // Adds the Kotlin Gradle plugin
-    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
     // OPTIONAL Kotlin Serialization plugin
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.21'
 }
 
 version = mod_version
@@ -109,7 +109,7 @@ repositories {
 
 dependencies {
     // Must use the '-neoforge' version on NeoForge. If on regular forge, omit the '-neoforge'
-    implementation 'thedarkcolour:kotlinforforge-neoforge:5.5.0'
+    implementation 'thedarkcolour:kotlinforforge-neoforge:5.6.0'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

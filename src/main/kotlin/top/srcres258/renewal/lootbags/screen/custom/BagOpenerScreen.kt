@@ -2,6 +2,7 @@ package top.srcres258.renewal.lootbags.screen.custom
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -31,14 +32,16 @@ class BagOpenerScreen(
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         setShaderTexture(0, GUI_TEXTURE)
-        guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
+        guiGraphics.blit(RenderType::guiTextured, GUI_TEXTURE, leftPos, topPos, 0F, 0F,
+            imageWidth, imageHeight, 256, 256)
         renderProgressBar(guiGraphics)
     }
 
     private fun renderProgressBar(guiGraphics: GuiGraphics) {
         if (menu.isCrafting) {
             setShaderTexture(0, PROGRESS_BAR_TEXTURE)
-            guiGraphics.blit(PROGRESS_BAR_TEXTURE, leftPos + 7, topPos + 36, 0, 0, menu.scaledProgress, 6)
+            guiGraphics.blit(RenderType::guiTextured, PROGRESS_BAR_TEXTURE, leftPos + 7, topPos + 36, 0F, 0F,
+                menu.scaledProgress, 6, 256, 256)
         }
     }
 

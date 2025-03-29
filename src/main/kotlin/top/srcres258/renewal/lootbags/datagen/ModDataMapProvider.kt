@@ -9,5 +9,5 @@ class ModDataMapProvider(
     packOutput: PackOutput,
     lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : DataMapProvider(packOutput, lookupProvider) {
-    override fun gather() {}
+    override fun gather(registries: HolderLookup.Provider) {}
 }

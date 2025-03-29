@@ -1,5 +1,8 @@
 package top.srcres258.renewal.lootbags.block
 
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -32,7 +35,15 @@ object ModBlocks {
 
     private fun <T : Block> registerBlockItem(name: String, block: DeferredBlock<T>) {
         ModItems.ITEMS.register(name) { ->
-            BlockItem(block.get(), Item.Properties())
+            BlockItem(
+                block.get(),
+                Item.Properties()
+                    .setId(ResourceKey.create(
+                        Registries.ITEM,
+                        ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, name)
+                    ))
+                    .useBlockDescriptionPrefix()
+            )
         }
     }
 

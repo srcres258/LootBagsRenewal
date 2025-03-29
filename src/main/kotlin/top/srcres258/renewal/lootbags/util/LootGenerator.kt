@@ -5,12 +5,12 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
+import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.storage.loot.*
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntry
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet
 import org.apache.commons.lang3.mutable.MutableInt
 import java.util.*
 import kotlin.math.min
@@ -24,8 +24,8 @@ private val LOOT_TABLE_ENTRIES: Set<ResourceKey<LootTable>> by lazy {
     // Include loot tables from all registered entities.
     for ((_, entity) in BuiltInRegistries.ENTITY_TYPE.entrySet()) {
         val lootTable = entity.defaultLootTable
-        if (lootTable !in result) {
-            result.add(lootTable)
+        if (!lootTable.isEmpty && lootTable.get() !in result) {
+            result.add(lootTable.get())
         }
     }
 
@@ -157,7 +157,7 @@ private fun generateLootsFromLootPools(
 
             val pool = lootPools[poolIndex]
             val lootParams = lootParamsBuilder.withLuck(luck)
-                .create(LootContextParamSet.builder().build())
+                .create(ContextKeySet.Builder().build())
             addRandomItemFromLootPoolEntries(
                 pool.entries,
                 result::add,

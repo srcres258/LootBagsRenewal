@@ -1,24 +1,32 @@
 package top.srcres258.renewal.lootbags.item.custom
 
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.stats.Stats
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
+import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.util.LootBagType
 import top.srcres258.renewal.lootbags.util.setShootMovementFromRotation
 
 class LootBagItem(
     val type: LootBagType,
-    properties: Properties = Properties().stacksTo(16)
+    properties: Properties = Properties()
+        .stacksTo(16)
+        .setId(ResourceKey.create(
+            Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, type.itemId)
+        ))
 ) : Item(properties) {
-    override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
+    override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
         val stack = player.getItemInHand(usedHand)
         if (!level.isClientSide && level is ServerLevel) {
             val loots = type.lootGenerator.generateLoot(
@@ -42,6 +50,6 @@ class LootBagItem(
 
         player.awardStat(Stats.ITEM_USED.get(this))
         stack.consume(1, player)
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
+        return if (level.isClientSide) InteractionResult.SUCCESS else InteractionResult.SUCCESS_SERVER
     }
 }

@@ -2,6 +2,7 @@ package top.srcres258.renewal.lootbags.screen.custom
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -49,5 +50,6 @@ abstract class LootBagContainerScreen<T : LootBagContainerMenu>(
 }
 
 private fun renderUnavailableIcon(guiGraphics: GuiGraphics, originX: Int, originY: Int) {
-    guiGraphics.blit(BAG_STORAGE_GUI_TEXTURE, originX, originY, 176, 0, 16, 16)
+    guiGraphics.blit(RenderType::guiTextured, BAG_STORAGE_GUI_TEXTURE, originX, originY, 176F, 0F,
+        16, 16, 256, 256)
 }

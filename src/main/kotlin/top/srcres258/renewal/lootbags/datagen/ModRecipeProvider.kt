@@ -5,22 +5,31 @@ import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
-import net.minecraft.data.recipes.ShapedRecipeBuilder
-import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.common.conditions.IConditionBuilder
+import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.util.LootBagType
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
-    output: PackOutput,
-    registries: CompletableFuture<HolderLookup.Provider>
-) : RecipeProvider(output, registries), IConditionBuilder {
-    override fun buildRecipes(recipeOutput: RecipeOutput) {
+    registries: HolderLookup.Provider,
+    output: RecipeOutput
+) : RecipeProvider(registries, output), IConditionBuilder {
+    class Runner(
+        packOutput: PackOutput,
+        registries: CompletableFuture<HolderLookup.Provider>
+    ) : RecipeProvider.Runner(packOutput, registries) {
+        override fun createRecipeProvider(registries: HolderLookup.Provider, output: RecipeOutput): RecipeProvider =
+            ModRecipeProvider(registries, output)
+
+        override fun getName(): String = "${LootBags.MOD_ID} recipe provider"
+    }
+
+    override fun buildRecipes() {
         // Recipes for blocks with functionalities.
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LOOT_RECYCLER)
+        shaped(RecipeCategory.MISC, ModBlocks.LOOT_RECYCLER)
             .pattern("AAA")
             .pattern("ABA")
             .pattern("ACA")
@@ -28,8 +37,8 @@ class ModRecipeProvider(
             .define('B', Items.CHEST)
             .define('C', Items.IRON_INGOT)
             .unlockedBy("has_chest", has(Items.CHEST))
-            .save(recipeOutput)
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BAG_OPENER)
+            .save(output)
+        shaped(RecipeCategory.MISC, ModBlocks.BAG_OPENER)
             .pattern("ACA")
             .pattern("ABA")
             .pattern("AAA")
@@ -37,8 +46,8 @@ class ModRecipeProvider(
             .define('B', Items.CHEST)
             .define('C', Items.IRON_INGOT)
             .unlockedBy("has_chest", has(Items.CHEST))
-            .save(recipeOutput)
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BAG_STORAGE)
+            .save(output)
+        shaped(RecipeCategory.MISC, ModBlocks.BAG_STORAGE)
             .pattern("AAA")
             .pattern("CBC")
             .pattern("AAA")
@@ -46,7 +55,7 @@ class ModRecipeProvider(
             .define('B', Items.CHEST)
             .define('C', Items.IRON_INGOT)
             .unlockedBy("has_chest", has(Items.CHEST))
-            .save(recipeOutput)
+            .save(output)
 
         // Recipes for conversions between loot bags.
         for (type in LootBagType.entries) {
@@ -63,10 +72,10 @@ class ModRecipeProvider(
                 // Skip for amounts larger than 4. Ingredients with massive amounts may cause
                 // network errors during client-server communications.
                 if (amount <= 4) {
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, type.asItem())
+                    shapeless(RecipeCategory.MISC, type.asItem())
                         .requires(otherType, type.amountFactorEquivalentTo(otherType).toInt())
                         .unlockedBy("has_${otherType.itemId}", has(otherType.asItem()))
-                        .save(recipeOutput, "${type.itemId}_from_${otherType.itemId}")
+                        .save(output, "${type.itemId}_from_${otherType.itemId}")
                 }
             }
         }

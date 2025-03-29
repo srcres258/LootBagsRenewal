@@ -19,7 +19,7 @@ object DataGenerators {
         generator.addProvider(event.includeServer(), LootTableProvider(packOutput, setOf(),
             listOf(LootTableProvider.SubProviderEntry(::ModBlockLootTableProvider, LootContextParamSets.BLOCK)),
             lookupProvider))
-        generator.addProvider(event.includeServer(), ModRecipeProvider(packOutput, lookupProvider))
+        generator.addProvider(event.includeServer(), ModRecipeProvider.Runner(packOutput, lookupProvider))
 
         val blockTagsProvider = ModBlockTagsProvider(packOutput, lookupProvider, existingFileHelper)
         val itemTagsProvider = ModItemTagsProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(),

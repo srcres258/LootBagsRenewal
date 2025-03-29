@@ -2,8 +2,11 @@ package top.srcres258.renewal.lootbags.block.custom
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.ItemInteractionResult
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
@@ -15,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
+import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.block.entity.custom.LootRecyclerBlockEntity
 
@@ -22,6 +26,8 @@ class LootRecyclerBlock(
     properties: Properties = Properties.of()
         .strength(3.5F)
         .requiresCorrectToolForDrops()
+        .setId(ResourceKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(LootBags.MOD_ID, "loot_recycler")))
 ) : LootBagEntityBlock(properties) {
     companion object {
         private val CODEC: MapCodec<LootRecyclerBlock> = simpleCodec(::LootRecyclerBlock)
@@ -56,14 +62,14 @@ class LootRecyclerBlock(
         player: Player,
         hand: InteractionHand,
         hitResult: BlockHitResult
-    ): ItemInteractionResult {
+    ): InteractionResult {
         if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS
+            return InteractionResult.SUCCESS
         } else {
             val blockEntity = level.getBlockEntity(pos)
             if (blockEntity != null && blockEntity is LootRecyclerBlockEntity) {
                 player.openMenu(blockEntity, pos)
-                return ItemInteractionResult.CONSUME
+                return InteractionResult.CONSUME
             } else {
                 throw IllegalStateException("The BlockEntity at $pos is not a LootRecyclerBlockEntity")
             }

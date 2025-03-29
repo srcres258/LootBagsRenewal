@@ -29,7 +29,7 @@ abstract class LootBagEntityBlock(properties: Properties) : BaseEntityBlock(prop
                     Component.translatable(
                     "tooltip.lootbags.bag_storage.output_type",
                     LootBagType.entries[bagStorage.targetBagTypeOrdinal % LootBagType.entries.size]
-                        .asItem().description.string
+                        .asItem().name.string
                 ))
             } else {
                 tooltipComponents.add(Component.translatable("tooltip.lootbags.press_shift_for_details"))

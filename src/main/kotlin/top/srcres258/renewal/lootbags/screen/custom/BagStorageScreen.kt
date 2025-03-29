@@ -2,6 +2,7 @@ package top.srcres258.renewal.lootbags.screen.custom
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -47,7 +48,8 @@ class BagStorageScreen(
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         setShaderTexture(0, GUI_TEXTURE)
-        guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
+        guiGraphics.blit(RenderType::guiTextured, GUI_TEXTURE, leftPos, topPos, 0F, 0F,
+            imageWidth, imageHeight, 256, 256)
     }
 
     override fun renderLabels(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int) {
