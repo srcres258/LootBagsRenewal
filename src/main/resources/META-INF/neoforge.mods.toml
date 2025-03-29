@@ -10,6 +10,8 @@ displayName="${mod_name}"
 credits="${mod_credits}"
 authors="${mod_authors}"
 description='''${mod_description}'''
+logoFile = "logo.png"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
