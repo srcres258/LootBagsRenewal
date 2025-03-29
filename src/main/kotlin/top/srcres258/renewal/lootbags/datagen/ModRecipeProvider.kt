@@ -7,7 +7,6 @@ import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
-import net.neoforged.neoforge.common.conditions.IConditionBuilder
 import top.srcres258.renewal.lootbags.LootBags
 import top.srcres258.renewal.lootbags.block.ModBlocks
 import top.srcres258.renewal.lootbags.util.LootBagType
@@ -16,7 +15,7 @@ import java.util.concurrent.CompletableFuture
 class ModRecipeProvider(
     registries: HolderLookup.Provider,
     output: RecipeOutput
-) : RecipeProvider(registries, output), IConditionBuilder {
+) : RecipeProvider(registries, output) {
     class Runner(
         packOutput: PackOutput,
         registries: CompletableFuture<HolderLookup.Provider>
