@@ -73,6 +73,15 @@ object LootBags {
                 else -> blockEntity.inputItemHandler
             }
         }
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntities.LOOT_RECYCLER.get(),
+        ) { blockEntity, side ->
+            when (side) {
+                Direction.DOWN -> blockEntity.outputItemHandler
+                else -> blockEntity.inputItemHandler
+            }
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])

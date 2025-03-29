@@ -22,11 +22,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.items.ItemStackHandler
 import top.srcres258.renewal.lootbags.block.entity.ModBlockEntities
 import top.srcres258.renewal.lootbags.component.ModDataComponents
-import top.srcres258.renewal.lootbags.item.custom.LootBagItem
 import top.srcres258.renewal.lootbags.screen.custom.LootRecyclerMenu
-import top.srcres258.renewal.lootbags.util.BagStorageRecord
-import top.srcres258.renewal.lootbags.util.LootBagType
-import top.srcres258.renewal.lootbags.util.setChangedAndUpdateBlock
+import top.srcres258.renewal.lootbags.util.*
 import kotlin.math.min
 
 class LootRecyclerBlockEntity(
@@ -87,6 +84,8 @@ class LootRecyclerBlockEntity(
     }
 
     val itemHandler: ItemStackHandler = LootRecyclerItemHandler()
+    val inputItemHandler = InputOnlyItemHandler(itemHandler, INPUT_SLOT)
+    val outputItemHandler = OutputOnlyItemHandler(itemHandler, OUTPUT_SLOT)
 
     var storedBagAmount: Int = 0
     /**
