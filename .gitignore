@@ -24,3 +24,6 @@ runs
 
 # generated files
 /src/generated
+
+# publishing repository
+/repo
