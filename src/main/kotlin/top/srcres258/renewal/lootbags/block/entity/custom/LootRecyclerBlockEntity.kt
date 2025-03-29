@@ -139,7 +139,7 @@ class LootRecyclerBlockEntity(
             // Increase `accumulation` randomly.
             val random = level.random
             val rand = Mth.nextDouble(random, 0.0, 1.0)
-            if (rand < 0.2) {
+            if (rand < 0.5) {
                 val rand1 = Mth.nextDouble(random, 0.0, 0.1)
                 accumulation += rand1 * inputStack.count
             }
