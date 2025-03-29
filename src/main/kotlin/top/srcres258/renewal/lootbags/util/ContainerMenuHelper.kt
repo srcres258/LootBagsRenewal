@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.srcres258.renewal.lootbags.LootBags
+import top.srcres258.renewal.lootbags.screen.custom.LootBagSlotItemHandler
 
 // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
 // must assign a slot number to each of the slots used by the GUI.
@@ -37,7 +38,8 @@ fun quickMoveStack(
     if (!sourceSlot.hasItem()) {
         return ItemStack.EMPTY
     }
-    val sourceStack = sourceSlot.item
+    val sourceStackOld = sourceSlot.item.copy()
+    val sourceStack = sourceStackOld.copy()
     if (sourceStack.isEmpty) {
         return ItemStack.EMPTY
     }
@@ -63,8 +65,18 @@ fun quickMoveStack(
 
     // If stack size == 0 (the entire stack was moved) set slot contents to null
     if (sourceStack.isEmpty) {
-        sourceSlot.set(ItemStack.EMPTY)
+        if (sourceSlot is LootBagSlotItemHandler) {
+            sourceSlot.extractItem(sourceStackOld.count, false)
+        } else {
+            sourceSlot.set(ItemStack.EMPTY)
+        }
     } else {
+        if (sourceSlot is LootBagSlotItemHandler) {
+            val deltaCount = sourceStackOld.count - sourceStack.count
+            if (deltaCount > 0) {
+                sourceSlot.extractItem(deltaCount, false)
+            }
+        }
         sourceSlot.setChanged()
     }
 
