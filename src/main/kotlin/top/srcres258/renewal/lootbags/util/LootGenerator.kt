@@ -8,6 +8,30 @@ import net.minecraft.util.RandomSource
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.storage.loot.*
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.ABANDONED_MINESHAFT
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.IGLOO_CHEST
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.RUINED_PORTAL
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.SIMPLE_DUNGEON
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.SPAWN_BONUS_CHEST
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.STRONGHOLD_CORRIDOR
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.STRONGHOLD_CROSSING
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.STRONGHOLD_LIBRARY
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_ARMORER
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_BUTCHER
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_CARTOGRAPHER
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_DESERT_HOUSE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_FISHER
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_FLETCHER
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_MASON
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_PLAINS_HOUSE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_SAVANNA_HOUSE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_SHEPHERD
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_SNOWY_HOUSE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_TAIGA_HOUSE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_TANNERY
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_TEMPLE
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_TOOLSMITH
+import net.minecraft.world.level.storage.loot.BuiltInLootTables.VILLAGE_WEAPONSMITH
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntry
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet
@@ -32,6 +56,119 @@ private val LOOT_TABLE_ENTRIES: Set<ResourceKey<LootTable>> by lazy {
     result
 }
 
+private val LOOT_TABLE_ENTRIES_COMMON: Set<ResourceKey<LootTable>> by lazy {
+    val result = mutableSetOf<ResourceKey<LootTable>>()
+
+    // 从原版战利品表中筛选村庄相关的战利品表
+    val villageLootTables = setOf(
+        VILLAGE_WEAPONSMITH,
+        VILLAGE_TOOLSMITH,
+        VILLAGE_ARMORER,
+        VILLAGE_MASON,
+        VILLAGE_SHEPHERD,
+        VILLAGE_BUTCHER,
+        VILLAGE_FLETCHER,
+        VILLAGE_FISHER,
+        VILLAGE_TANNERY,
+        VILLAGE_TEMPLE,
+        VILLAGE_DESERT_HOUSE,
+        VILLAGE_PLAINS_HOUSE,
+        VILLAGE_TAIGA_HOUSE,
+        VILLAGE_SNOWY_HOUSE,
+        VILLAGE_SAVANNA_HOUSE,
+        VILLAGE_CARTOGRAPHER,
+    )
+
+    result.addAll(villageLootTables)
+    result
+}
+
+private val LOOT_TABLE_ENTRIES_UNCOMMON: Set<ResourceKey<LootTable>> by lazy {
+    val result = mutableSetOf<ResourceKey<LootTable>>()
+
+    val villageLootTables = setOf(
+        //以下为普通物品
+        VILLAGE_WEAPONSMITH,
+        VILLAGE_TOOLSMITH,
+        VILLAGE_ARMORER,
+        VILLAGE_MASON,
+        VILLAGE_SHEPHERD,
+        VILLAGE_BUTCHER,
+        VILLAGE_FLETCHER,
+        VILLAGE_FISHER,
+        VILLAGE_TANNERY,
+        VILLAGE_TEMPLE,
+        VILLAGE_DESERT_HOUSE,
+        VILLAGE_PLAINS_HOUSE,
+        VILLAGE_TAIGA_HOUSE,
+        VILLAGE_SNOWY_HOUSE,
+        VILLAGE_SAVANNA_HOUSE,
+        VILLAGE_CARTOGRAPHER,
+        //以下为高级物品
+        SPAWN_BONUS_CHEST,
+        // 简单地牢
+        SIMPLE_DUNGEON,
+        // 废弃矿井
+        ABANDONED_MINESHAFT,
+        // 要塞相关
+        STRONGHOLD_LIBRARY,
+        STRONGHOLD_CROSSING,
+        STRONGHOLD_CORRIDOR,
+        // 沙漠神殿
+        BuiltInLootTables.DESERT_PYRAMID,
+        // 丛林神庙
+        BuiltInLootTables.JUNGLE_TEMPLE,
+        // 雪屋箱子
+        IGLOO_CHEST,
+        // 水下废墟
+        BuiltInLootTables.UNDERWATER_RUIN_SMALL,
+        BuiltInLootTables.UNDERWATER_RUIN_BIG,
+        // 埋藏的宝藏
+        BuiltInLootTables.BURIED_TREASURE,
+        // 沉船相关
+        BuiltInLootTables.SHIPWRECK_MAP,
+        BuiltInLootTables.SHIPWRECK_SUPPLY,
+        BuiltInLootTables.SHIPWRECK_TREASURE,
+        // 掠夺者前哨站
+        BuiltInLootTables.PILLAGER_OUTPOST,
+        // 林地府邸
+        BuiltInLootTables.WOODLAND_MANSION,
+        // 毁灭传送门
+        RUINED_PORTAL,
+        // 古城
+        BuiltInLootTables.ANCIENT_CITY,
+        BuiltInLootTables.ANCIENT_CITY_ICE_BOX,
+        // 试炼 chambers
+        BuiltInLootTables.TRIAL_CHAMBERS_REWARD,
+        BuiltInLootTables.TRIAL_CHAMBERS_REWARD_COMMON,
+        BuiltInLootTables.TRIAL_CHAMBERS_REWARD_RARE,
+        BuiltInLootTables.TRIAL_CHAMBERS_REWARD_UNIQUE,
+        BuiltInLootTables.TRIAL_CHAMBERS_SUPPLY,
+        BuiltInLootTables.TRIAL_CHAMBERS_CORRIDOR,
+        BuiltInLootTables.TRIAL_CHAMBERS_INTERSECTION,
+        BuiltInLootTables.TRIAL_CHAMBERS_ENTRANCE,
+        BuiltInLootTables.EQUIPMENT_TRIAL_CHAMBER,
+        BuiltInLootTables.EQUIPMENT_TRIAL_CHAMBER_RANGED,
+        BuiltInLootTables.EQUIPMENT_TRIAL_CHAMBER_MELEE,
+        // 钓鱼相关
+        BuiltInLootTables.FISHING,
+        BuiltInLootTables.FISHING_JUNK,
+        BuiltInLootTables.FISHING_FISH,
+        BuiltInLootTables.FISHING_TREASURE,
+
+        BuiltInLootTables.DESERT_WELL_ARCHAEOLOGY,
+        BuiltInLootTables.DESERT_PYRAMID_ARCHAEOLOGY,
+        BuiltInLootTables.TRAIL_RUINS_ARCHAEOLOGY_COMMON,
+        BuiltInLootTables.TRAIL_RUINS_ARCHAEOLOGY_RARE,
+        BuiltInLootTables.OCEAN_RUIN_WARM_ARCHAEOLOGY,
+        BuiltInLootTables.OCEAN_RUIN_COLD_ARCHAEOLOGY
+
+    )
+
+    result.addAll(villageLootTables)
+    result
+}
+
 class LootGenerator(private val bagType: LootBagType) {
     fun generateLoot(
         level: ServerLevel,
@@ -43,37 +180,51 @@ class LootGenerator(private val bagType: LootBagType) {
             // Equal to 1 common bag by its rarity.
             LootBagType.COMMON -> generateLootsFromLootTables(
                 level, 0.0F, 50.0F, 1, 1,
-                allowSameTable = true, allowSamePool = true, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = true, allowSamePool = true,
+                lootTableSet = LOOT_TABLE_ENTRIES_COMMON, // 使用村庄战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 4 common bags by its rarity.
             LootBagType.UNCOMMON -> generateLootsFromLootTables(
                 level, 0.0F, 50.0F, 1, 4,
-                allowSameTable = true, allowSamePool = true, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = true, allowSamePool = true,
+                lootTableSet = LOOT_TABLE_ENTRIES_UNCOMMON, // 使用UNCOMMON战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 16 common bags by its rarity.
             LootBagType.RARE -> generateLootsFromLootTables(
                 level, 0.0F, 100.0F, 2, 4,
-                allowSameTable = false, allowSamePool = false, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = false, allowSamePool = false,
+                lootTableSet = LOOT_TABLE_ENTRIES, // 使用完整战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 64 common bags by its rarity.
             LootBagType.EPIC -> generateLootsFromLootTables(
                 level, 100.0F, 200.0F, 4, 8,
-                allowSameTable = false, allowSamePool = false, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = false, allowSamePool = false,
+                lootTableSet = LOOT_TABLE_ENTRIES, // 使用完整战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 256 common bags by its rarity.
             LootBagType.LEGENDARY -> generateLootsFromLootTables(
                 level, 200.0F, 400.0F, 8, 16,
-                allowSameTable = false, allowSamePool = false, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = false, allowSamePool = false,
+                lootTableSet = LOOT_TABLE_ENTRIES, // 使用完整战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 1024 common bags by its rarity.
             LootBagType.PATIENT -> generateLootsFromLootTables(
                 level, 400.0F, 800.0F, 16, 32,
-                allowSameTable = false, allowSamePool = false, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = false, allowSamePool = false,
+                lootTableSet = LOOT_TABLE_ENTRIES, // 使用完整战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 4096 common bags by its rarity.
             LootBagType.ARTIFICIAL -> generateLootsFromLootTables(
                 level, 800.0F, 1024.0F, 32, 64,
-                allowSameTable = true, allowSamePool = true, lootParamsBuilder = lootParamsBuilder
+                allowSameTable = true, allowSamePool = true,
+                lootTableSet = LOOT_TABLE_ENTRIES, // 使用完整战利品表
+                lootParamsBuilder = lootParamsBuilder
             )
             // Equal to 1 common bag by its rarity.
             LootBagType.BACON -> listOf(ItemStack(Items.PORKCHOP, random.nextIntBetweenInclusive(1, 8)))
@@ -89,6 +240,7 @@ private fun generateLootsFromLootTables(
     poolCountPerTable: Int = 1,
     allowSameTable: Boolean = true,
     allowSamePool: Boolean = true,
+    lootTableSet: Set<ResourceKey<LootTable>> = LOOT_TABLE_ENTRIES, // 新增参数
     lootParamsBuilder: LootParams.Builder = LootParams.Builder(level)
 ): List<ItemStack> {
     val random = level.random
@@ -97,20 +249,20 @@ private fun generateLootsFromLootTables(
 
     do {
         tried.clear()
-        for (i in 0 ..< min(tableCount, LOOT_TABLE_ENTRIES.size)) {
+        for (i in 0 ..< min(tableCount, lootTableSet.size)) { // 使用传入的集合
             var tableIndex: Int
             if (allowSameTable) {
-                tableIndex = random.nextInt(LOOT_TABLE_ENTRIES.size)
+                tableIndex = random.nextInt(lootTableSet.size)
             } else {
                 do {
-                    tableIndex = random.nextInt(LOOT_TABLE_ENTRIES.size)
+                    tableIndex = random.nextInt(lootTableSet.size)
                 } while (tableIndex in tried)
             }
             if (!allowSameTable) {
                 tried.add(tableIndex)
             }
 
-            val lootTableKey = LOOT_TABLE_ENTRIES.elementAt(tableIndex)
+            val lootTableKey = lootTableSet.elementAt(tableIndex) // 使用传入的集合
             val lootTable = level.server.reloadableRegistries().getLootTable(lootTableKey)
             if (lootTable.pools.isEmpty()) {
                 continue

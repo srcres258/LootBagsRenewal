@@ -41,7 +41,7 @@ enum class LootBagType(
     LEGENDARY("legendary_loot_bag", 4U, true, false, 0.0015625, 0U .. 1U),
     PATIENT("patient_loot_bag", 5U, true, false, 0.000390625, 0U .. 1U),
     ARTIFICIAL("artificial_loot_bag", 6U, false, true, 0.0, 0U .. 0U),
-    BACON("bacon_loot_bag", 0U, true, false, 0.4, 0U .. 10U);
+    BACON("bacon_loot_bag", 0U, false, false, 0.4, 0U .. 10U);
 
     companion object {
         /**

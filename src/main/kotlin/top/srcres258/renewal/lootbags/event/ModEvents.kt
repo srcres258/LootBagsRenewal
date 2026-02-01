@@ -1,5 +1,6 @@
 package top.srcres258.renewal.lootbags.event
 
+import net.minecraft.world.entity.EntityType
 import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.SubscribeEvent
@@ -13,14 +14,34 @@ import top.srcres258.renewal.lootbags.util.newItemEntitiesForDropping
 object ModEvents {
     @SubscribeEvent
     fun onLivingDrops(event: LivingDropsEvent) {
+        // Skip player entities to prevent loot bags from dropping when players are killed
+        if (event.entity.type == EntityType.PLAYER) {
+            return
+        }
+        
         // Try to add loot bags to the drops list whenever a living entity drops items.
         for (bagType in LootBagType.entries) {
             if (!bagType.droppable) {
                 continue
             }
 
+
+
+
             val random = event.entity.level().random
-            val rand = Mth.nextDouble(random, 0.0, 1.0)
+            // Calculate fx as -4.4375×10^-6 ⋅x(x−50)
+            val x = event.entity.maxHealth
+            val fx = -4.4375e-6 * x * (x - 50.0)
+            // Generate random number and add fx to it
+            val rand = Mth.nextDouble(random, 0.0, 1.0) + fx
+
+
+
+
+
+
+
+
             if (rand <= bagType.dropChance) {
                 val entityPos = event.entity.getPosition(0F)
                 val amount = random.nextIntBetweenInclusive(bagType.dropAmountRange.first.toInt(),
